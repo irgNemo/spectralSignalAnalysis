@@ -9,7 +9,8 @@ def main():
     text_files = read_folder_content(args.foldername)
     
     for text_file in text_files:
-        content = read_file_content(text_file)
+        file_path = "{0}{1}".format(args.foldername, text_file)
+        content = read_file_content(file_path)
         print(content)
 
 def read_file_content(filename: str) -> pandas.DataFrame:

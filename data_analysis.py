@@ -1,33 +1,43 @@
 from utils import input_output as io
 from utils import utils as utils
+import os
+import pandas
 
 
 def main():
-    print("Spectral signal analysis")
-    data_header = ["wavelength", "reflectance"]
+    print("Spectral signal analysis") # System title
+
+    # Parse input data
     args = io.arg_parser()
 
-    folder_path = args.input_folder
-    folder_name = folder_path.split('/')[-2]
-    figure_save_path = args.output_folder_figures
+    # Variable definition
+    data_header = ["wavelength", "reflectance"]
+    input_folder_path = args.input_folder
+    output_folder_path = args.output_folder_path
+    folder_name = input_folder_path.split('/')[-2]  # Extract the last part of the input file to use it as a filename
+    #  images_save_path = args.output_folder_images
 
-    text_files = io.read_folder_content(folder_path)
-    dataframe_dict = io.load_folder_csv(text_files, folder_path)
+    text_files = io.read_folder_content(input_folder_path)
+    dataframe_dict = io.load_folder_csv(text_files, input_folder_path)
     utils.insert_header(dataframe_dict, data_header)
     spectrums_dataframe = utils.concatenate_signal_spectrum(dataframe_dict)
 
-    spectrum_stats = spectrums_dataframe.describe()
-    #spectrum_stats.to_csv("{}_boxplot_stats.csv".format(folder_name), header=True, index=True)
 
+    # Saving concatenated spectrums to disk
+    io.save_dataframe(spectrums_dataframe, output_folder_path, folder_name)
 
-    #spectrums_dataframe.to_csv(args.output_file, header=True, index=False)
-    #io.plotting_boxplot(spectrums_dataframe, filename=folder_name, extension="png", figsize=(50, 20), dpi=200)
-    #io.plotting_all_spectrums(spectrums=dataframe_dict, filename=folder_name, output_folder=figure_save_path, figsize=(40, 20), dpi=200)
+    # Saving boxplot statistics to disk
+    io.save_dataframe_boxplot_stats(spectrums_dataframe.describe(), output_folder_path, folder_name)
 
-    #for key in dataframe_dict.keys():
-    #    spectrum = dataframe_dict[key]
-    #    io.plotting_one_spectrum(spectrum=spectrum, filename=key, output_folder=figure_save_path, extension="png", figsize=(30, 9), dpi=200)
+    # Plotting boxplot in one image
+    io.plotting_boxplot(spectrums_dataframe, output_folder_path=output_folder_path, filename=folder_name, extension="png", figsize=(50, 20), dpi=200)
 
+    # Plotting each spectrum on one image
+    #io.plotting_all_spectrums(spectrums=dataframe_dict, output_folder=output_folder_path, fig_size=(40, 20), dpi=200)
+
+    # Plotting all spectrums together
+    #io.plotting_spectrums_all_together(dataframe_dict, filename=folder_name, output_folder=output_folder_path,
+    #                                   fig_size=(40, 20), dpi=200, extension="png")
 
 
 if __name__ == "__main__":

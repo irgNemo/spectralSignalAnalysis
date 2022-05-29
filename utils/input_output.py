@@ -9,14 +9,15 @@ import os
 import pandas
 import matplotlib.pyplot as plt
 
+COLORS = ["#000000", "#00FF00", "#0000FF", "#FF0000", "#01FFFE", "#FFA6FE", "#FFDB66", "#006401", "#010067", "#95003A", "#007DB5", "#FF00F6", "#774D00", "#90FB92", "#0076FF", "#D5FF00", "#FF937E", "#6A826C", "#FF029D", "#FE8900", "#7A4782", "#7E2DD2", "#85A900", "#FF0056", "#A42400", "#00AE7E", "#683D3B", "#BDC6FF", "#263400", "#BDD393", "#00B917", "#9E008E", "#001544", "#C28C9F", "#FF74A3", "#01D0FF", "#004754", "#E56FFE", "#788231", "#0E4CA1", "#91D0CB", "#BE9970", "#968AE8", "#BB8800", "#43002C", "#DEFF74", "#00FFC6", "#FFE502", "#620E00", "#008F9C", "#98FF52", "#7544B1", "#B500FF", "#00FF78", "#FF6E41", "#005F39", "#6B6882", "#5FAD4E", "#A75740", "#A5FFD2", "#FFB167", "#009BFF", "#E85EBE"]
 
-def plotting_boxplot(spectrums: pandas.DataFrame, output_folder_path: str, filename: str, extension: str = "png", figsize: tuple = (6, 8),
-                     dpi: int = 100):
+
+def plotting_boxplot(spectrums: pandas.DataFrame, output_folder_path: str, filename: str, extension: str = "png", figsize: tuple = (6, 8), dpi: int = 100):
 
     create_path_if_not_exist(output_folder_path)
 
     myFig = plt.figure(figsize=figsize)
-    path = os.path.join(output_folder_path, filename, filename)
+    path = os.path.join(output_folder_path, filename)
     filename = "{path}_boxplot.{extension}".format(path=path, extension=extension)
     bp = spectrums.boxplot(column=spectrums.columns.values[1:].tolist())
     myFig.savefig(filename, format=extension, dpi=dpi)
@@ -40,10 +41,10 @@ def plotting_spectrums_all_together(spectrums: dict, filename: str, extension: s
     fig, ax = plt.subplots(figsize=fig_size)
     fig.suptitle(filename)
 
-    for key in spectrums.keys():
+    for i, key in enumerate(spectrums.keys()):
         spectrum = spectrums[key]
         columns_name = spectrum.columns.values
-        ax.plot(spectrum[columns_name[1]], linewidth=2, label=key)
+        ax.plot(spectrum[columns_name[1]], linewidth=2, label=key, color=COLORS[i])
         ax.set(xlabel=columns_name[0], ylabel=columns_name[1])
         plt.draw()
 
@@ -63,14 +64,14 @@ def plotting_one_spectrum(spectrum: pandas.DataFrame, filename: str, extension:s
     ax.plot(spectrum[columns_name[0]], spectrum[columns_name[1]])
     ax.set(xlabel=columns_name[0], ylabel=columns_name[1])
     plt.draw()
-    figure_save_path = "{folder}/{filename}.{extension}".format(folder=output_folder, filename=filename,
-                                                                extension=extension)
+
+    filename = "{filename}.{extension}".format(filename=filename, extension=extension)
+    figure_save_path = os.path.join(output_folder, filename)
     fig.savefig(figure_save_path, dpi=dpi)
     plt.close(fig)
 
 
 def save_dataframe_boxplot_stats(dataframe: pandas.DataFrame, output_folder_path: str, filename: str):
-    output_folder_path = os.path.join(output_folder_path, filename)
     create_path_if_not_exist(output_folder_path)
     output_folder_path = os.path.join(output_folder_path, filename)
     dataframe.to_csv("{}_boxplot_stats.csv".format(output_folder_path), header=True, index=True)
@@ -78,7 +79,6 @@ def save_dataframe_boxplot_stats(dataframe: pandas.DataFrame, output_folder_path
 
 def save_dataframe(dataframe: pandas.DataFrame, output_folder_path: str, filename: str):
     #  Save concatenated DataFrame of the spectrums in different files
-    output_folder_path = os.path.join(output_folder_path, filename)
     create_path_if_not_exist(output_folder_path)
     concatenated_spectrum_filename = "{}_{}".format(filename, "concatenated_spectrums.csv")
     concatenated_spectrum_path = os.path.join(output_folder_path, concatenated_spectrum_filename)

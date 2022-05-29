@@ -22,6 +22,7 @@ def main():
     utils.insert_header(dataframe_dict, data_header)
     spectrums_dataframe = utils.concatenate_signal_spectrum(dataframe_dict)
 
+    output_folder_path = os.path.join(output_folder_path, folder_name)
 
     # Saving concatenated spectrums to disk
     io.save_dataframe(spectrums_dataframe, output_folder_path, folder_name)
@@ -33,12 +34,11 @@ def main():
     io.plotting_boxplot(spectrums_dataframe, output_folder_path=output_folder_path, filename=folder_name, extension="png", figsize=(50, 20), dpi=200)
 
     # Plotting each spectrum on one image
-    #io.plotting_all_spectrums(spectrums=dataframe_dict, output_folder=output_folder_path, fig_size=(40, 20), dpi=200)
+    io.plotting_all_spectrums(spectrums=dataframe_dict, output_folder=output_folder_path, fig_size=(40, 20), dpi=200)
 
     # Plotting all spectrums together
-    #io.plotting_spectrums_all_together(dataframe_dict, filename=folder_name, output_folder=output_folder_path,
-    #                                   fig_size=(40, 20), dpi=200, extension="png")
-
+    io.plotting_spectrums_all_together(dataframe_dict, filename=folder_name, output_folder=output_folder_path,
+                                       fig_size=(40, 20), dpi=200, extension="png")
 
 if __name__ == "__main__":
     main()

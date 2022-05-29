@@ -1,7 +1,6 @@
 from utils import input_output as io
 from utils import utils as utils
 import os
-import pandas
 
 
 def main():
@@ -31,7 +30,8 @@ def main():
     io.save_dataframe_boxplot_stats(spectrums_dataframe.describe(), output_folder_path, folder_name)
 
     # Plotting boxplot in one image
-    io.plotting_boxplot(spectrums_dataframe, output_folder_path=output_folder_path, filename=folder_name, extension="png", figsize=(50, 20), dpi=200)
+    io.plotting_boxplot(spectrums_dataframe, output_folder_path=output_folder_path, filename=folder_name,
+                        extension="png", figsize=(50, 20), dpi=200)
 
     # Plotting each spectrum on one image
     io.plotting_all_spectrums(spectrums=dataframe_dict, output_folder=output_folder_path, fig_size=(40, 20), dpi=200)

@@ -8,6 +8,8 @@ import argparse as ap
 import os
 import pandas
 import matplotlib.pyplot as plt
+import numpy as np
+from utils import utils
 
 COLORS = ["#000000", "#00FF00", "#0000FF", "#FF0000", "#01FFFE", "#FFA6FE", "#FFDB66", "#006401", "#010067", "#95003A", "#007DB5", "#FF00F6", "#774D00", "#90FB92", "#0076FF", "#D5FF00", "#FF937E", "#6A826C", "#FF029D", "#FE8900", "#7A4782", "#7E2DD2", "#85A900", "#FF0056", "#A42400", "#00AE7E", "#683D3B", "#BDC6FF", "#263400", "#BDD393", "#00B917", "#9E008E", "#001544", "#C28C9F", "#FF74A3", "#01D0FF", "#004754", "#E56FFE", "#788231", "#0E4CA1", "#91D0CB", "#BE9970", "#968AE8", "#BB8800", "#43002C", "#DEFF74", "#00FFC6", "#FFE502", "#620E00", "#008F9C", "#98FF52", "#7544B1", "#B500FF", "#00FF78", "#FF6E41", "#005F39", "#6B6882", "#5FAD4E", "#A75740", "#A5FFD2", "#FFB167", "#009BFF", "#E85EBE"]
 
@@ -32,7 +34,7 @@ def plotting_boxplot(spectrums: pandas.DataFrame, output_folder_path: str, filen
 
     """
 
-    create_path_if_not_exist(output_folder_path)
+    utils.create_path_if_not_exist(output_folder_path)
 
     my_fig = plt.figure(figsize=figsize)
     path = os.path.join(output_folder_path, filename)
@@ -59,7 +61,7 @@ def plotting_all_spectrums(spectrums: dict, output_folder: str, extension: str =
     -------
 
     """
-    create_path_if_not_exist(output_folder)
+    utils.create_path_if_not_exist(output_folder)
 
     for key in spectrums.keys():
         spectrum = spectrums[key]
@@ -85,19 +87,37 @@ def plotting_spectrums_all_together(spectrums: dict, filename: str, extension: s
 
     """
 
-    create_path_if_not_exist(output_folder)
+    utils.create_path_if_not_exist(output_folder)
 
     fig, ax = plt.subplots(figsize=fig_size)
     fig.suptitle(filename)
+    min_x = 0
+    max_x = 0
+    min_y = 0
+    max_y = 0
+
 
     for i, key in enumerate(spectrums.keys()):
         spectrum = spectrums[key]
         columns_name = spectrum.columns.values
-        ax.plot(spectrum[columns_name[1]], linewidth=2, label=key, color=COLORS[i])
+        x = spectrum[columns_name[0]]
+        y = spectrum[columns_name[1]]
+        min_x = x.min() if min_x < x.min() else min_x
+        max_x = x.max() if max_x < x.max() else max_x
+        min_y = y.min() if min_y < y.min() else min_y
+        max_y = y.max() if max_y < y.max() else max_y
+        ax.plot(x, y, linewidth=2, label=key, color=COLORS[i])
         ax.set(xlabel=columns_name[0], ylabel=columns_name[1])
         plt.draw()
 
+    step_x = round((max_x - min_x) * 0.1)
+    step_y = round((max_y - min_y) * 0.1)
+    xticks = np.arange(min_x, max_x, step_x)
+    yticks = np.arange(min_y, max_y, step_y)
+    ax.set_xticks(xticks)
+    ax.set_yticks(yticks)
     ax.legend(fontsize=16, bbox_to_anchor=(1.10, 1), loc='upper right')
+    ax.grid(color='r', linestyle='dotted', linewidth=1)
 
     filename = "{}.{}".format(filename, extension)
     figure_save_path = os.path.join(output_folder, filename)
@@ -127,9 +147,21 @@ def plotting_one_spectrum(spectrum: pandas.DataFrame, filename: str, extension:s
     columns_name = spectrum.columns.values
     fig, ax = plt.subplots(figsize=fig_size)
     fig.suptitle(filename)
-    ax.plot(spectrum[columns_name[0]], spectrum[columns_name[1]])
+    x = spectrum[columns_name[0]]
+    y = spectrum[columns_name[1]]
+    min_x = x.min()
+    max_x = x.max()
+    min_y = y.min()
+    max_y = y.max()
+    step_x = round((max_x - min_x) * 0.1)
+    step_y = round((max_y - min_y) * 0.1)
+    xticks = np.arange(min_x, max_x, step_x)
+    yticks = np.arange(min_y, max_y, step_y)
+    ax.set_xticks(xticks)
+    ax.set_yticks(yticks)
+    ax.plot(x, y, linewidth=2,)
     ax.set(xlabel=columns_name[0], ylabel=columns_name[1])
-    plt.draw()
+    ax.grid(color='r', linestyle='dotted', linewidth=1)
 
     filename = "{filename}.{extension}".format(filename=filename, extension=extension)
     figure_save_path = os.path.join(output_folder, filename)
@@ -151,7 +183,7 @@ def save_dataframe_boxplot_stats(dataframe: pandas.DataFrame, output_folder_path
 
     """
 
-    create_path_if_not_exist(output_folder_path)
+    utils.create_path_if_not_exist(output_folder_path)
     output_folder_path = os.path.join(output_folder_path, filename)
     dataframe.to_csv("{}_boxplot_stats.csv".format(output_folder_path), header=True, index=True)
 
@@ -170,25 +202,13 @@ def save_dataframe(dataframe: pandas.DataFrame, output_folder_path: str, filenam
 
     """
     #  Save concatenated DataFrame of the spectrums in different files
-    create_path_if_not_exist(output_folder_path)
+    utils.create_path_if_not_exist(output_folder_path)
     concatenated_spectrum_filename = "{}_{}".format(filename, "concatenated_spectrums.csv")
     concatenated_spectrum_path = os.path.join(output_folder_path, concatenated_spectrum_filename)
     dataframe.to_csv(concatenated_spectrum_path, header=True, index=False)
 
 
-def create_path_if_not_exist(output_folder_path: str):
-    """Create a particular folder tree if not exist
 
-    Parameters
-    ----------
-    output_folder_path : Folder path
-
-    Returns
-    -------
-
-    """
-    if not os.path.exists(output_folder_path):
-        os.makedirs(output_folder_path)
 
 
 def load_folder_csv(text_files: list, folder_path: str, header=None) -> list:
@@ -248,6 +268,7 @@ def arg_parser() -> ap.Namespace:
     """
     parser = ap.ArgumentParser(description="Spectral signal analysis")
     parser.add_argument("-i", "--input_folder", help="Path and folder name where the spectral files reside",
-                        required=True)
+                        required=True, nargs="+")
     parser.add_argument("-o", "--output_folder_path", help="Path where all data will be saved")
     return parser.parse_args()
+

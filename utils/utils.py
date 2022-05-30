@@ -1,4 +1,5 @@
 import pandas
+import os
 
 
 def concatenate_signal_spectrum(dataframes: dict) -> pandas.DataFrame:
@@ -42,3 +43,18 @@ def insert_header(spectrum_dict: dict, header: str):
     for key in spectrum_dict.keys():
         spectrum = spectrum_dict[key]
         spectrum.columns = header
+
+
+def create_path_if_not_exist(output_folder_path: str):
+    """Create a particular folder tree if not exist
+
+    Parameters
+    ----------
+    output_folder_path : Folder path
+
+    Returns
+    -------
+
+    """
+    if not os.path.exists(output_folder_path):
+        os.makedirs(output_folder_path)

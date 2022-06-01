@@ -3,6 +3,7 @@ from utils import utils as utils
 import os
 import pandas
 import matplotlib.pyplot as plt
+import math
 
 
 def main():
@@ -18,15 +19,33 @@ def main():
 
     dataset = create_dataset_signal_by_reflectance(input_folder_path)
     column_names = dataset.columns.values
-    column_names_list = column_names[0:3].tolist()
+    column_names_list = column_names.tolist()
     column_class_name = column_names[-1]
 
-    boxplot = dataset.boxplot(column=column_names_list, by=column_class_name)
-    boxplot.plot()
-    plt.show()
+    # Calculating the number of images and layout
+    layout = (10, 10)
+    num_columns = len(dataset.columns) - 1
+    window_size = (layout[0] * layout[1])
+    num_iterations = math.ceil(num_columns / window_size)
+
+    window_init = 0
+    window_end = window_init + window_size
+
+    for i in range(num_iterations):
+        pass #TODO Iterar num_iteration veces para crear los box plots por bloques de 100 columnas
+
+    # boxplot_axes = dataset.boxplot(column=column_names_list, by=column_class_name, figsize=(40, 20))
 
 
+    """
+    for row in boxplot_axes:
+        for axe in row:
+            axe.plot(layot=(5, 5))
 
+    fig = axe.get_figure()
+    figure_name = "{0}.png".format("prueba")
+    fig.savefig(figure_name, dpi=200)
+    """
 
 
 

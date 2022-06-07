@@ -19,22 +19,28 @@ def main():
 
     dataset = create_dataset_signal_by_reflectance(input_folder_path)
     column_names = dataset.columns.values
-    column_names_list = column_names.tolist()
+    #column_names_list = column_names.tolist()
     column_class_name = column_names[-1]
-
-    # Calculating the number of images and layout
-    layout = (10, 10)
     num_columns = len(dataset.columns) - 1
-    window_size = (layout[0] * layout[1])
-    num_iterations = math.ceil(num_columns / window_size)
 
-    window_init = 0
-    window_end = window_init + window_size
+
+    # Calculate the number of images and layout
+    window_size = 100
+    num_iterations = math.floor(num_columns / window_size)
 
     for i in range(num_iterations):
-        pass #TODO Iterar num_iteration veces para crear los box plots por bloques de 100 columnas
+        window_init_index = window_size * i
+        column_names_list = list(range(window_init_index, window_init_index + window_size))
+        boxplot_axes = dataset.boxplot(column=column_names_list, by=column_class_name, figsize=(40, 20))
 
-    # boxplot_axes = dataset.boxplot(column=column_names_list, by=column_class_name, figsize=(40, 20))
+        for row in boxplot_axes:
+            for axe in row:
+                axe.plot()
+
+        fig = axe.get_figure()
+        figure_name = "{0}.png".format(i)
+        fig.savefig(figure_name, dpi=200)
+
 
 
     """

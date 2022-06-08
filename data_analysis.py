@@ -18,40 +18,7 @@ def main():
     output_folder_path = args.output_folder_path
 
     dataset = create_dataset_signal_by_reflectance(input_folder_path)
-    column_names = dataset.columns.values
-    #column_names_list = column_names.tolist()
-    column_class_name = column_names[-1]
-    num_columns = len(dataset.columns) - 1
-
-
-    # Calculate the number of images and layout
-    window_size = 100
-    num_iterations = math.floor(num_columns / window_size)
-
-    for i in range(num_iterations):
-        window_init_index = window_size * i
-        column_names_list = list(range(window_init_index, window_init_index + window_size))
-        boxplot_axes = dataset.boxplot(column=column_names_list, by=column_class_name, figsize=(40, 20))
-
-        for row in boxplot_axes:
-            for axe in row:
-                axe.plot()
-
-        fig = axe.get_figure()
-        figure_name = "{0}.png".format(i)
-        fig.savefig(figure_name, dpi=200)
-
-
-
-    """
-    for row in boxplot_axes:
-        for axe in row:
-            axe.plot(layot=(5, 5))
-
-    fig = axe.get_figure()
-    figure_name = "{0}.png".format("prueba")
-    fig.savefig(figure_name, dpi=200)
-    """
+    io.plotting_boxplot_by_class_per_window(dataset=dataset, window_size=100, output_folder_path=output_folder_path)
 
 
 

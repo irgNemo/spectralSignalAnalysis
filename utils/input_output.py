@@ -10,8 +10,44 @@ import pandas
 import matplotlib.pyplot as plt
 import numpy as np
 from utils import utils
+import math
 
-COLORS = ["#000000", "#00FF00", "#0000FF", "#FF0000", "#01FFFE", "#FFA6FE", "#FFDB66", "#006401", "#010067", "#95003A", "#007DB5", "#FF00F6", "#774D00", "#90FB92", "#0076FF", "#D5FF00", "#FF937E", "#6A826C", "#FF029D", "#FE8900", "#7A4782", "#7E2DD2", "#85A900", "#FF0056", "#A42400", "#00AE7E", "#683D3B", "#BDC6FF", "#263400", "#BDD393", "#00B917", "#9E008E", "#001544", "#C28C9F", "#FF74A3", "#01D0FF", "#004754", "#E56FFE", "#788231", "#0E4CA1", "#91D0CB", "#BE9970", "#968AE8", "#BB8800", "#43002C", "#DEFF74", "#00FFC6", "#FFE502", "#620E00", "#008F9C", "#98FF52", "#7544B1", "#B500FF", "#00FF78", "#FF6E41", "#005F39", "#6B6882", "#5FAD4E", "#A75740", "#A5FFD2", "#FFB167", "#009BFF", "#E85EBE"]
+COLORS = ["#000000", "#00FF00", "#0000FF", "#FF0000", "#01FFFE", "#FFA6FE", "#FFDB66", "#006401", "#010067", "#95003A",
+          "#007DB5", "#FF00F6", "#774D00", "#90FB92", "#0076FF", "#D5FF00", "#FF937E", "#6A826C", "#FF029D", "#FE8900",
+          "#7A4782", "#7E2DD2", "#85A900", "#FF0056", "#A42400", "#00AE7E", "#683D3B", "#BDC6FF", "#263400", "#BDD393",
+          "#00B917", "#9E008E", "#001544", "#C28C9F", "#FF74A3", "#01D0FF", "#004754", "#E56FFE", "#788231", "#0E4CA1",
+          "#91D0CB", "#BE9970", "#968AE8", "#BB8800", "#43002C", "#DEFF74", "#00FFC6", "#FFE502", "#620E00", "#008F9C",
+          "#98FF52", "#7544B1", "#B500FF", "#00FF78", "#FF6E41", "#005F39", "#6B6882", "#5FAD4E", "#A75740", "#A5FFD2",
+          "#FFB167", "#009BFF", "#E85EBE"]
+
+
+def plotting_boxplot_by_class_per_window(dataset: pandas.DataFrame, window_size: int, output_folder_path: str,
+                                         folder_name: str = "boxplot_by_class", figsize: tuple = (40, 20),
+                                         dpi: int = 200):
+    # TODO Falta plotear la última parte del dataset ya que redonde hacia abajo y si no es múltiplo entonces queda sin plotear
+    path = os.path.join(output_folder_path, folder_name)
+    utils.create_path_if_not_exist(path)
+
+    column_names_list = dataset.columns.values
+    column_class_name = dataset.columns.values[-1]
+    num_columns = len(dataset.columns) - 1
+
+    # Calculate the number of images and layout
+    #window_size = 100
+    num_iterations = math.floor(num_columns / window_size)
+
+    for i in range(num_iterations):
+        window_init_index = window_size * i
+        dataset_segment = list(column_names_list[window_init_index: window_init_index + window_size])
+        boxplot_axes = dataset.boxplot(column=dataset_segment, by=column_class_name, figsize=figsize)
+
+        for row in boxplot_axes:
+            for axe in row:
+                axe.plot()
+
+        fig = axe.get_figure()
+        figure_name = "{0}.png".format(i)
+        fig.savefig(os.path.join(path, figure_name), dpi=dpi)
 
 
 def plotting_boxplot(spectrums: pandas.DataFrame, output_folder_path: str, filename: str, extension: str = "png",

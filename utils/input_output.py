@@ -22,7 +22,7 @@ COLORS = ["#000000", "#00FF00", "#0000FF", "#FF0000", "#01FFFE", "#FFA6FE", "#FF
 
 
 def plotting_boxplot_by_class_per_window(dataset: pandas.DataFrame, window_size: int, output_folder_path: str,
-                                         folder_name: str = "boxplot_by_class", figsize: tuple = (40, 20),
+                                         folder_name: str = "boxplot_by_class\\", figsize: tuple = (40, 20),
                                          dpi: int = 200):
     # TODO Falta plotear la última parte del dataset ya que redonde hacia abajo y si no es múltiplo entonces queda sin plotear
     path = os.path.join(output_folder_path, folder_name)

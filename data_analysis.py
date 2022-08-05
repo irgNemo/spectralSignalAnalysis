@@ -17,8 +17,10 @@ def main():
     input_folder_path = args.input_folder
     output_folder_path = args.output_folder_path
 
-    dataset = create_dataset_signal_by_reflectance(input_folder_path)
-    io.plotting_boxplot_by_class_per_window(dataset=dataset, window_size=100, output_folder_path=output_folder_path)
+    signal_analysis(input_folder_path, output_folder_path)
+
+    #dataset = create_dataset_signal_by_reflectance(input_folder_path)
+    #io.plotting_boxplot_by_class_per_window(dataset=dataset, window_size=100, output_folder_path=output_folder_path)
 
 
 
@@ -43,7 +45,7 @@ def create_dataset_signal_by_reflectance(input_folder_path: list) -> pandas.Data
     for folder_path in input_folder_path:
         text_files = io.read_folder_content(folder_path)
         text_files.sort()
-        class_name = folder_path.split('/')[-2]
+        class_name = folder_path.split(os.path.sep)[-2]
         class_labels.extend([class_name] * len(text_files))
         dataframe_dict.update(io.load_folder_csv(text_files, folder_path))
 
@@ -74,7 +76,7 @@ def signal_analysis(input_folder_paths: list, output_folder_path_root: str):
 
 
     for input_folder_path in input_folder_paths:
-        folder_name = input_folder_path.split('/')[-2]  # Extract the last part of the input file to use it as a filename
+        folder_name = input_folder_path.split(os.path.sep)[-2]  # Extract the last part of the input file to use it as a filename
         text_files = io.read_folder_content(input_folder_path)
         text_files.sort()
         dataframe_dict = io.load_folder_csv(text_files, input_folder_path)

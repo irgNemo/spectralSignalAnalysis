@@ -17,10 +17,12 @@ def main():
     input_folder_path = args.input_folder
     output_folder_path = args.output_folder_path
 
-    signal_analysis(input_folder_path, output_folder_path)
 
-    #dataset = create_dataset_signal_by_reflectance(input_folder_path)
-    #io.plotting_boxplot_by_class_per_window(dataset=dataset, window_size=100, output_folder_path=output_folder_path)
+    dataset = create_dataset_signal_by_reflectance(input_folder_path)
+    dataset.to_csv('.\dataset_quercus.csv')
+    io.plotting_boxplot_by_class_per_window(dataset=dataset, window_size=100, output_folder_path=output_folder_path)
+
+    signal_analysis(input_folder_path, output_folder_path)
 
 
 
